@@ -3,16 +3,23 @@ require("dotenv").config()
 require("@nomiclabs/hardhat-etherscan")
 require("./tasks/block-number")
 require("hardhat-gas-reporter")
+require("solidity-coverage")
 
 /** @type import('hardhat/config').HardhatUserConfig */
 
+// we can add the environment variables in const variables to leave the code more clean 
+// and also so we can put a default value if we forget to define the values of them in the .env file
+const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "https://eth-goerli"
+const GOERLI_PRIVATE_KEY = process.env.GOERLI_PRIVATE_KEY || "0xKey"
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "key"
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || "key"
 
 module.exports = {
   defaultNetwork: "hardhat",
   networks: {
     goerli: {
-      url: process.env.GOERLI_RPC_URL,
-      accounts: [process.env.GOERLI_PRIVATE_KEY],
+      url: GOERLI_RPC_URL,
+      accounts: [GOERLI_PRIVATE_KEY],
       chainId: 5,
     },
     localhost: {
@@ -23,9 +30,14 @@ module.exports = {
   },
   solidity: "0.8.7",
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: ETHERSCAN_API_KEY,
   },
   gasReporter: {
     enabled: true,
+    outputFile: "gas-report.txt",
+    noColors: true, // this is because when output to a file, it get's all mess up
+    currency: "USD", // we can get the cost for each function in USD 
+    coinmarketcap: COINMARKETCAP_API_KEY,
+    // token: "AVAX"
   }
 };
